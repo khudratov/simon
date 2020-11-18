@@ -1,3 +1,3 @@
-module.exports = {
-  publicPath: process.env.NODE_ENV === "/simon/",
-};
+// module.exports = {
+//   publicPath: process.env.NODE_ENV === "/simon/",
+// };
