@@ -81,11 +81,8 @@ export default {
   border-bottom-right-radius: 160px;
 }
 
-.red:active,
-.blue:active,
-.yellow:active,
-.green:active,
+
 .click {
-  opacity: 0.8;
+  opacity: 1 !important;
 }
 </style>

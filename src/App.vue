@@ -1,31 +1,19 @@
 <template>
   <div id="app">
-    <h2>Simon Says</h2>
-
+    <h2 class="game-title">Simon Says</h2>
     <div class="flex-row">
       <div class="flex--item">
+        <span class="helper-text">{{ helper }} </span>
         <Simon @clicked="userTurn" :active="active" />
       </div>
       <div class="flex--item">
         <div class="round">Round {{ round }}</div>
-        <br />
-        <br />
-        <button class="btn-start" @click="startSing()" :disabled="gameStarted">
+
+        <button class="btn-start" @click="startSing()" :disabled="button">
           Старт
         </button>
-        <br />
-        <br />
-        <div class="game-mode">
-          <div class="game-mode--text">Уровн сложности:</div>
-          <input type="radio" name="game-mode" id="mode-ease" checked />
-          <label for="mode-ease">Легкий</label>
-          <br />
-          <input type="radio" name="game-mode" id="mode-normal" />
-          <label for="mode-normal">Средний</label>
-          <br />
-          <input type="radio" name="game-mode" id="mode-hard" />
-          <label for="mode-hard">Сложный</label>
-        </div>
+
+        <GameMode @changed="changeDifficulty" />
       </div>
     </div>
   </div>
@@ -33,6 +21,7 @@
 
 <script>
 import Simon from "./components/Simon";
+import GameMode from "./components/GameMode";
 
 import one from "./assets/sounds/1.mp3";
 import two from "./assets/sounds/2.mp3";
@@ -41,21 +30,24 @@ import four from "./assets/sounds/4.mp3";
 
 export default {
   name: "App",
-  components: { Simon },
+  components: { Simon, GameMode },
 
   data() {
     return {
       active: 0,
-      gameStarted: false,
+      button: false,
       user: false,
       round: 0,
       history: [],
       current: 0,
+      difficulty: 1500,
+      helper: "Нажмите старт!",
     };
   },
   methods: {
     startSing() {
-      this.gameStarted = true;
+      this.helper = "Слушайте ";
+      this.button = true;
       const random = Math.floor(Math.random() * 4) + 1;
       this.history.push(random);
       this.current = 0;
@@ -64,13 +56,13 @@ export default {
         if (current > this.history.length - 1) {
           this.current = 0;
           this.user = true;
+          this.helper = "Повторяете";
           clearInterval(idInterval);
         } else {
           this.playSound(this.history[current]);
-          this.setActive(this.history[current]);
           this.current++;
         }
-      }, 500);
+      }, this.difficulty);
     },
 
     userTurn(index) {
@@ -82,6 +74,7 @@ export default {
             this.current++;
           } else {
             this.round++;
+            this.user = false;
             setTimeout(() => this.startSing(), 500);
           }
         } else {
@@ -92,8 +85,10 @@ export default {
     },
 
     whenLouse() {
-      alert(`You won ${this.round}`);
-
+      setTimeout(() => {
+        alert(`You won ${this.round}`);
+      }, 200);
+      this.helper = "Нажмите старт!";
       this.current = 0;
       this.user = false;
       this.gameStarted = false;
@@ -101,7 +96,7 @@ export default {
       this.round = 0;
     },
 
-    setActive(value) {
+    light(value) {
       this.active = value;
       setTimeout(() => {
         this.active = null;
@@ -125,6 +120,8 @@ export default {
           break;
       }
 
+      this.light(index);
+
       let audio = new Audio(src).play();
       if (audio !== undefined) {
         audio
@@ -133,6 +130,10 @@ export default {
             console.error("error:", error);
           });
       }
+    },
+
+    changeDifficulty(value) {
+      this.difficulty = value;
     },
   },
 };
@@ -148,6 +149,15 @@ export default {
   margin-top: 60px;
 }
 
+.game-title {
+  font-size: 34px;
+}
+
+.helper-text {
+  display: block;
+  margin-bottom: 15px;
+}
+
 .flex-row {
   display: flex;
   justify-content: center;
@@ -155,6 +165,23 @@ export default {
 }
 
 .flex--item {
-  margin: 10px;
+  margin: 10px 30px;
+}
+
+.btn-start {
+  background: #6dabe8;
+  box-sizing: border-box;
+  width: 5em;
+  border: none;
+  padding: 0.3em 0.6em;
+  font-size: 1.4em;
+  -webkit-border-radius: 10px 10px 10px 10px;
+  border-radius: 10px 10px 10px 10px;
+  margin: 20px 0;
+}
+
+.round {
+  font-size: 1.4em;
+  font-weight: bold;
 }
 </style>
