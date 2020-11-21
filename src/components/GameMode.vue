@@ -8,6 +8,7 @@
         id="mode-ease"
         checked
         @change="changed(1500)"
+        :disabled="button"
       />
       <label for="mode-ease">Легкий</label>
     </div>
@@ -17,6 +18,7 @@
         name="game-mode"
         id="mode-normal"
         @change="changed(1000)"
+        :disabled="button"
       />
       <label for="mode-normal">Средний</label>
     </div>
@@ -27,6 +29,7 @@
         name="game-mode"
         id="mode-hard"
         @change="changed(400)"
+        :disabled="button"
       />
       <label for="mode-hard">Сложный</label>
     </div>
@@ -35,6 +38,7 @@
 
 <script>
 export default {
+  props: ["button"],
   methods: {
     changed(value) {
       this.$emit("changed", value);
@@ -50,7 +54,7 @@ export default {
 }
 
 .game-mode--input {
-  margin: 5px 0;
+  padding: 5px 0;
   text-align: left;
 }
 </style>

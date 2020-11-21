@@ -13,7 +13,7 @@
           Старт
         </button>
 
-        <GameMode @changed="changeDifficulty" />
+        <GameMode @changed="changeDifficulty" :button="button" />
       </div>
     </div>
   </div>
@@ -31,19 +31,28 @@ import four from "./assets/sounds/4.mp3";
 export default {
   name: "App",
   components: { Simon, GameMode },
-
   data() {
     return {
+      ready: false,
+      soundPlay: true,
       active: 0,
       button: false,
       user: false,
-      round: 0,
+      round: 1,
       history: [],
       current: 0,
       difficulty: 1500,
       helper: "Нажмите старт!",
+      sounds: [],
     };
   },
+  mounted() {
+    let arr = [one, two, three, four];
+    for (let i = 0; i < 4; i++) {
+      this.sounds.push(new Audio(arr[i]));
+    }
+  },
+
   methods: {
     startSing() {
       this.helper = "Слушайте ";
@@ -70,7 +79,6 @@ export default {
         this.playSound(index);
         if (index == this.history[this.current]) {
           if (this.current != this.history.length - 1) {
-            console.log("right");
             this.current++;
           } else {
             this.round++;
@@ -78,7 +86,7 @@ export default {
             setTimeout(() => this.startSing(), 500);
           }
         } else {
-          ///when Lose\
+          //when Lose
           this.whenLouse();
         }
       }
@@ -86,14 +94,14 @@ export default {
 
     whenLouse() {
       setTimeout(() => {
-        alert(`You won ${this.round}`);
+        alert(`Вы проиграли в раунде ${this.round}`);
       }, 200);
       this.helper = "Нажмите старт!";
       this.current = 0;
       this.user = false;
-      this.gameStarted = false;
+      this.button = false;
       this.history = [];
-      this.round = 0;
+      this.round = 1;
     },
 
     light(value) {
@@ -104,32 +112,9 @@ export default {
     },
 
     playSound(index) {
-      let src = null;
-      switch (index) {
-        case 1:
-          src = one;
-          break;
-        case 2:
-          src = two;
-          break;
-        case 3:
-          src = three;
-          break;
-        case 4:
-          src = four;
-          break;
-      }
-
       this.light(index);
-
-      let audio = new Audio(src).play();
-      if (audio !== undefined) {
-        audio
-          .then(function() {})
-          .catch(function(error) {
-            console.error("error:", error);
-          });
-      }
+      let clone = this.sounds[index - 1].cloneNode(true);
+      clone.play();
     },
 
     changeDifficulty(value) {
