@@ -93,8 +93,9 @@ export default {
     },
 
     whenLouse() {
+      let round = this.round;
       setTimeout(() => {
-        alert(`Вы проиграли в раунде ${this.round}`);
+        alert(`Вы проиграли в раунде ${round}`);
       }, 200);
       this.helper = "Нажмите старт!";
       this.current = 0;
